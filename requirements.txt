@@ -4,3 +4,6 @@ torchvision >= 0.8.0
 
 # for demo
 matplotlib
+
+# for author
+sphinx == 3.3.1

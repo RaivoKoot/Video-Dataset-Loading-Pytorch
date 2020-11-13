@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 from torchvision import transforms
 import torch
+from collections.abc import Callable
 
 class VideoRecord(object):
     """
@@ -42,7 +43,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
     loads x RGB frames of a video (sparse temporal sampling) and evenly
     chooses those frames from start to end of the video, returning
     a list of x PIL images or ``FRAMES x CHANNELS x HEIGHT x WIDTH``
-    tensors where FRAMES=x if the ``kale.loaddata.video_dataset.imglist_totensor()``
+    tensors where FRAMES=x if the ``imglist_totensor()``
     transform is used.
 
     More specifically, the frame range [0,N] is divided into NUM_SEGMENTS
@@ -50,8 +51,8 @@ class VideoFrameDataset(torch.utils.data.Dataset):
 
     Note:
         A demonstration of using this class can be seen
-        in ``PyKale/examples/video_dataset_loading``
-        https://github.com/pykale/pykale/tree/master/examples/video_data_loading
+        in ``demo.py``
+        https://github.com/RaivoKoot/Video-Dataset-Loading-Pytorch
 
     Note:
         This dataset broadly corresponds to the frame sampling technique
@@ -97,10 +98,15 @@ class VideoFrameDataset(torch.utils.data.Dataset):
                    frames from segments with random_shift=False.
 
     """
-    def __init__(self, root_path, annotationfile_path,
-                 num_segments=3, frames_per_segment=1,
-                 imagefile_template='img_{:05d}.jpg', transform=None,
-                 random_shift=True, test_mode=False):
+    def __init__(self,
+                 root_path: str,
+                 annotationfile_path: str,
+                 num_segments: int = 3,
+                 frames_per_segment: int = 1,
+                 imagefile_template: str='img_{:05d}.jpg',
+                 transform = None,
+                 random_shift: bool = True,
+                 test_mode: bool = False):
         super(VideoFrameDataset, self).__init__()
 
         self.root_path = root_path
@@ -234,7 +240,10 @@ def imglist_totensor(img_list):
     Converts each PIL image in a list to
     a torch Tensor and stacks them into
     a single tensor. Can be used as first transform
-    for ``kale.loaddata.video_dataset.VideoFrameDataset``.
+    for ``VideoFrameDataset``.
+    To use this with torchvision.transforms.Compose, wrap this
+    function in a torchvision lambda like
+    this ``torchvision.transforms.Lambda(imglist_totensor)``.
 
     Args:
         img_list: list of PIL images.
