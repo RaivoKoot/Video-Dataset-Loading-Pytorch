@@ -133,3 +133,12 @@ A proper code-based explanation on how to use VideoFrameDataset for training is 
 
 ### 6. Acknowledgements
 We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it.
+```
+@InProceedings{wang2016_TemporalSegmentNetworks,
+    title={Temporal Segment Networks: Towards Good Practices for Deep Action Recognition},
+    author={Limin Wang and Yuanjun Xiong and Zhe Wang and Yu Qiao and Dahua Lin and
+            Xiaoou Tang and Luc {Val Gool}},
+    booktitle={The European Conference on Computer Vision (ECCV)},
+    year={2016}
+}
+```
