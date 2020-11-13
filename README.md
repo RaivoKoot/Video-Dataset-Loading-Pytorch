@@ -119,7 +119,9 @@ the `imagefile_template` parameter as "img_{:05d}.jpg", is all that it takes to 
 When loading a video, only a number of its frames are loaded. They are chosen in the following way:
 1. The frame indices [1,N] are divided into NUM_SEGMENTS even segments. From each segment, FRAMES_PER_SEGMENT consecutive indices are chosen at random.
 This results in NUM_SEGMENTS*FRAMES_PER_SEGMENT chosen indices, whose frames are loaded as PIL images and put into a list and returned when calling
-`dataset[i]`.
+`dataset[i]`.  
+  
+![alt text](https://github.com/RaivoKoot/images/blob/main/Sparse_Temporal_Sampling.jpg "Sparse-Temporal-Sampling-Strategy")
   
 ### 4. Using VideoFrameDataset for training
 As demonstrated in `demo.py`, we can use PyTorch's `torch.utils.data.DataLoader` class with VideoFrameDataset to take care of shuffling, batching, and more.
