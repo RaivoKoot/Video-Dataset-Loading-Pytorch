@@ -108,7 +108,7 @@ The accompanying annotation `.txt` file contains the following rows
 jumping/0001 17 0
 jumping/0002 18 0
 running/0001 15 1
-running/0002 20 1
+running/0002 15 1
 ```
 Instantiating a VideoFrameDataset with the `root_path` parameter pointing to `demo_dataset`, the `annotationsfile_path` parameter pointing to the annotation file, and
 the `imagefile_template` parameter as "img_{:05d}.jpg", is all that it takes to start using the VideoFrameDataset class.
