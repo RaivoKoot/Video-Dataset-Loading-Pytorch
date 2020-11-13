@@ -150,17 +150,17 @@ The folder structure looks as follows:
     │       └───0002
     │             ├───img_00001.jpg
     │             .
-    │             └───img_00017.jpg
+    │             └───img_00018.jpg
     │
     └───running # arbitrary folder naming
             ├───0001  # arbitrary video folder naming
             │     ├───img_00001.jpg
             │     .
-            │     └───img_00017.jpg
+            │     └───img_00015.jpg
             └───0002
                   ├───img_00001.jpg
                   .
-                  └───img_00017.jpg
+                  └───img_00015.jpg
 
      
 
@@ -171,7 +171,7 @@ The accompanying annotation ``.txt`` file contains the following rows
     jumping/0001 17 0
     jumping/0002 18 0
     running/0001 15 1
-    running/0002 20 1
+    running/0002 15 1
 
 Instantiating a VideoFrameDataset with the ``root_path`` parameter
 pointing to ``demo_dataset``, the ``annotationsfile_path`` parameter
