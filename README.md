@@ -1,4 +1,4 @@
-[![Documentation Status](https://readthedocs.org/projects/video-dataset-loading-pytorch/badge/?version=latest)](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/?badge=latest)  
+[![Documentation Status](https://readthedocs.org/projects/video-dataset-loading-pytorch/badge/?version=latest)](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/?badge=latest) [![Coverage Status](https://coveralls.io/repos/github/RaivoKoot/Video-Dataset-Loading-Pytorch/badge.svg?branch=main)](https://coveralls.io/github/RaivoKoot/Video-Dataset-Loading-Pytorch?branch=main)
 # Efficient Video Dataset Loading, Preprocessing, and Augmentation
 Author: [Raivo Koot](https://github.com/RaivoKoot)  
 [Read the Docs: Video-Dataset-Loading-Pytorch](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html)  
