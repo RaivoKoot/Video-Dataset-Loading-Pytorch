@@ -128,7 +128,10 @@ We can further chain preprocessing and augmentation functions that act on batche
   
 As of `torchvision 0.8.0`, all torchvision transforms can now also operate on batches of images, and they apply deterministic or random transformations
 on the batch identically on all images of the batch. Therefore, any torchvision transform can be used here to apply video-uniform preprocessing and augmentation.
-
+  
+REMEMBER:  
+Pytorch transforms are applied to individual dataset samples (in this case a video frame PIL list, or a frame tensor after `imglist_totensor()`) before
+batching. So, any transforms used here must expect its input to be a frame tensor of shape `FRAMES x CHANNELS x HEIGHT x WIDTH` or a list of PIL images if `imglist_totensor()` is not used.
 ### 5. Conclusion
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
