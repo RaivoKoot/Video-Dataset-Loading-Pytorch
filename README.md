@@ -1,7 +1,7 @@
 [![Documentation Status](https://readthedocs.org/projects/video-dataset-loading-pytorch/badge/?version=latest)](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/?badge=latest) 
 # Efficient Video Dataset Loading, Preprocessing, and Augmentation
 Author: [Raivo Koot](https://github.com/RaivoKoot)  
-[Read the Docs: Video-Dataset-Loading-Pytorch](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html)  
+https://video-dataset-loading-pytorch.readthedocs.io/  
   
 If you are completely unfamiliar with loading datasets in PyTorch using `torch.utils.data.Dataset` and `torch.utils.data.DataLoader`, I recommend
 getting familiar with these first through [this](https://pytorch.org/tutorials/beginner/data_loading_tutorial.html) or 
