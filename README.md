@@ -136,7 +136,8 @@ batching. So, any transforms used here must expect its input to be a frame tenso
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
 ### 6. Acknowledgements
-We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it.
+We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it
+for general use and compatibility.
 ```
 @InProceedings{wang2016_TemporalSegmentNetworks,
     title={Temporal Segment Networks: Towards Good Practices for Deep Action Recognition},
