@@ -39,7 +39,7 @@ minimum effort and no modification. The class merely expects the video
 dataset to have a certain structure on disk and expects a .txt
 annotation file that enumerates each video sample. Details on this can
 be found below and at
-``https://pykale.readthedocs.io/en/latest/kale.loaddata.html#kale-loaddata-video_dataset-module``.
+``https://video-dataset-loading-pytorch.readthedocs.io/``.
 
 2) Efficiently because the video loading pipeline that this class
 implements is very fast. This minimizes GPU waiting time during training
