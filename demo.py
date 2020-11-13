@@ -59,7 +59,7 @@ if __name__ == '__main__':
         test_mode=False
     )
 
-    sample = dataset[1]
+    sample = dataset[2]
     # tensor of shape (NUM_SEGMENTS*FRAMES_PER_SEGMENT) x CHANNELS x HEIGHT x WIDTH
     frame_tensor = sample[0]
     print('Video Tensor Size:', frame_tensor.size())
