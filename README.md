@@ -1,5 +1,4 @@
 [![Documentation Status](https://readthedocs.org/projects/video-dataset-loading-pytorch/badge/?version=latest)](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/?badge=latest)  
-![alt text](https://github.com/RaivoKoot/images/blob/main/Action_Video.jpg "Action Video")
 # Efficient Video Dataset Loading, Preprocessing, and Augmentation
 Author: [Raivo Koot](https://github.com/RaivoKoot)  
 [Read the Docs: Video-Dataset-Loading-Pytorch](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html)  
@@ -51,7 +50,7 @@ for image in frames:
     plt.show()
     plt.pause(1)
 ```
-
+![alt text](https://github.com/RaivoKoot/images/blob/main/Action_Video.jpg "Action Video")
 # Table of Contents
 - [1. Requirements](#1-requirements)
 - [2. Custom Dataset](#2-custom-dataset)
