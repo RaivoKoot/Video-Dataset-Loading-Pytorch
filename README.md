@@ -24,7 +24,7 @@ This approach has shown to be very effective and is taken from
 In conjunction with PyTorch's DataLoader, the VideoFrameDataset class returns video batch tensors of size `BATCH x FRAMES x CHANNELS x HEIGHT x WIDTH`.  
   
 For a demo, visit `demo.py`.  
-If you find this repository helpful, please consider giving it a star.
+
 ### QuickDemo (demo.py)
 ```python
 root = os.path.join(os.getcwd(), 'demo_dataset')  # Folder in which all videos lie in a specific structure
