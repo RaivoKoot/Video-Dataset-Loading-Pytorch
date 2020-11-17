@@ -59,7 +59,7 @@ for image in frames:
 - [3. Video Frame Sampling Method](#3-video-frame-sampling-method)
 - [4. Using VideoFrameDataset for Training](#4-using-videoframedataset-for-training)
 - [5. Conclusion](#5-conclusion)
-- [6. Upcoming Features](#5-upcoming-features)
+- [6. Upcoming Features](#6-upcoming-features)
 - [7. Acknowledgements](#6-acknowledgements)
 
 ### 1. Requirements
