@@ -59,7 +59,8 @@ for image in frames:
 - [3. Video Frame Sampling Method](#3-video-frame-sampling-method)
 - [4. Using VideoFrameDataset for Training](#4-using-videoframedataset-for-training)
 - [5. Conclusion](#5-conclusion)
-- [6. Acknowledgements](#6-acknowledgements)
+- [6. Upcoming Features](#5-upcoming-features)
+- [7. Acknowledgements](#6-acknowledgements)
 
 ### 1. Requirements
 ```
@@ -139,7 +140,12 @@ batching. So, any transforms used here must expect its input to be a frame tenso
 ### 5. Conclusion
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
-### 6. Acknowledgements
+### 6. Upcoming Features
+- [ ] Add demo for sampling a single continous-frame clip from videos.
+- [ ] Add support for arbitrary labels that are more than just a single integer.
+- [ ] Add support for specifying START_FRAME and END_FRAME for a video instead of NUM_FRAMES.
+
+### 7. Acknowledgements
 We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it
 for general use and compatibility.
 ```
