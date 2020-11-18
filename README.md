@@ -1,6 +1,8 @@
-[![Documentation Status](https://readthedocs.org/projects/video-dataset-loading-pytorch/badge/?version=latest)](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/video-dataset-loading-pytorch/badge/?version=latest)](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/?badge=latest) 
 # Efficient Video Dataset Loading, Preprocessing, and Augmentation
 Author: [Raivo Koot](https://github.com/RaivoKoot)  
+https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html  
+If you find the code useful, please star the repository.  
   
 If you are completely unfamiliar with loading datasets in PyTorch using `torch.utils.data.Dataset` and `torch.utils.data.DataLoader`, I recommend
 getting familiar with these first through [this](https://pytorch.org/tutorials/beginner/data_loading_tutorial.html) or 
@@ -10,7 +12,7 @@ getting familiar with these first through [this](https://pytorch.org/tutorials/b
 The VideoFrameDataset class serves to `easily`, `efficiently` and `effectively` load video samples from video datasets in PyTorch.
 1) Easily because this dataset class can be used with custom datasets with minimum effort and no modification. The class merely expects the 
 video dataset to have a certain structure on disk and expects a .txt annotation file that enumerates each video sample. Details on this 
-can be found below and at `https://video-dataset-loading-pytorch.readthedocs.io/`.
+can be found below and at `https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html`.
 2) Efficiently because the video loading pipeline that this class implements is very fast. This minimizes GPU waiting time during training by eliminating input bottlenecks
 that can slow down training time by several folds.
 3) Effectively because the implemented sampling strategy for video frames is very strong. Video training using the entire sequence of 
@@ -21,7 +23,8 @@ This approach has shown to be very effective and is taken from
 
 In conjunction with PyTorch's DataLoader, the VideoFrameDataset class returns video batch tensors of size `BATCH x FRAMES x CHANNELS x HEIGHT x WIDTH`.  
   
-For a demo, visit `demo.py`.
+For a demo, visit `demo.py`.  
+
 ### QuickDemo (demo.py)
 ```python
 root = os.path.join(os.getcwd(), 'demo_dataset')  # Folder in which all videos lie in a specific structure
@@ -49,7 +52,7 @@ for image in frames:
     plt.show()
     plt.pause(1)
 ```
-
+![alt text](https://github.com/RaivoKoot/images/blob/main/Action_Video.jpg "Action Video")
 # Table of Contents
 - [1. Requirements](#1-requirements)
 - [2. Custom Dataset](#2-custom-dataset)
@@ -57,7 +60,8 @@ for image in frames:
 - [4. Alternate Video Frame Sampling Methods](#4-alternate-vide-frame-sampling-methods)
 - [5. Using VideoFrameDataset for Training](#5-using-videoframedataset-for-training)
 - [6. Conclusion](#6-conclusion)
-- [7. Acknowledgements](#7-acknowledgements)
+- [7. Upcoming Features](#7-upcoming-features)
+- [8. Acknowledgements](#8-acknowledgements)
 
 ### 1. Requirements
 ```
@@ -119,12 +123,13 @@ When loading a video, only a number of its frames are loaded. They are chosen in
 1. The frame indices [1,N] are divided into NUM_SEGMENTS even segments. From each segment, FRAMES_PER_SEGMENT consecutive indices are chosen at random.
 This results in NUM_SEGMENTS*FRAMES_PER_SEGMENT chosen indices, whose frames are loaded as PIL images and put into a list and returned when calling
 `dataset[i]`.
+![alt text](https://github.com/RaivoKoot/images/blob/main/Sparse_Temporal_Sampling.jpg "Sparse-Temporal-Sampling-Strategy")
 
 ### 4. Alternate Video Frame Sampling Methods
 If you do not want to use sparse temporal sampling and instead want to sample a single N-frame continuous
 clip from a video, this is possible. Set `NUM_SEGMENTS=1` and `FRAMES_PER_SEGMENT=N`. Because VideoFrameDataset
 will chose a random start index per segment and take `NUM_SEGMENTS` continuous frames from each sampled start
-index, this will result in a single N-frame continuous clip per video. An example of this is in `demo.py`. 
+index, this will result in a single N-frame continuous clip per video. An example of this is in `demo.py`.  
   
 ### 5. Using VideoFrameDataset for training
 As demonstrated in `demo.py`, we can use PyTorch's `torch.utils.data.DataLoader` class with VideoFrameDataset to take care of shuffling, batching, and more.
@@ -134,12 +139,21 @@ We can further chain preprocessing and augmentation functions that act on batche
   
 As of `torchvision 0.8.0`, all torchvision transforms can now also operate on batches of images, and they apply deterministic or random transformations
 on the batch identically on all images of the batch. Therefore, any torchvision transform can be used here to apply video-uniform preprocessing and augmentation.
-
+  
+REMEMBER:  
+Pytorch transforms are applied to individual dataset samples (in this case a video frame PIL list, or a frame tensor after `imglist_totensor()`) before
+batching. So, any transforms used here must expect its input to be a frame tensor of shape `FRAMES x CHANNELS x HEIGHT x WIDTH` or a list of PIL images if `imglist_totensor()` is not used.
 ### 6. Conclusion
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
-### 7. Acknowledgements
-We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it.
+### 7. Upcoming Features
+- [x] Add demo for sampling a single continous-frame clip from videos.
+- [ ] Add support for arbitrary labels that are more than just a single integer.
+- [ ] Add support for specifying START_FRAME and END_FRAME for a video instead of NUM_FRAMES.
+
+### 8. Acknowledgements
+We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it
+for general use and compatibility.
 ```
 @InProceedings{wang2016_TemporalSegmentNetworks,
     title={Temporal Segment Networks: Towards Good Practices for Deep Action Recognition},
