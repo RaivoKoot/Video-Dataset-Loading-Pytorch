@@ -57,7 +57,7 @@ for image in frames:
 - [1. Requirements](#1-requirements)
 - [2. Custom Dataset](#2-custom-dataset)
 - [3. Video Frame Sampling Method](#3-video-frame-sampling-method)
-- [4. Alternate Video Frame Sampling Methods](#4-alternate-vide-frame-sampling-methods)
+- [4. Alternate Video Frame Sampling Methods](#4-alternate-video-frame-sampling-methods)
 - [5. Using VideoFrameDataset for Training](#5-using-videoframedataset-for-training)
 - [6. Conclusion](#6-conclusion)
 - [7. Upcoming Features](#7-upcoming-features)
