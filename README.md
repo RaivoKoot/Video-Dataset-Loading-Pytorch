@@ -54,9 +54,10 @@ for image in frames:
 - [1. Requirements](#1-requirements)
 - [2. Custom Dataset](#2-custom-dataset)
 - [3. Video Frame Sampling Method](#3-video-frame-sampling-method)
-- [4. Using VideoFrameDataset for Training](#4-using-videoframedataset-for-training)
-- [5. Conclusion](#5-conclusion)
-- [6. Acknowledgements](#6-acknowledgements)
+- [4. Alternate Video Frame Sampling Methods](#4-alternate-vide-frame-sampling-methods)
+- [5. Using VideoFrameDataset for Training](#5-using-videoframedataset-for-training)
+- [6. Conclusion](#6-conclusion)
+- [7. Acknowledgements](#7-acknowledgements)
 
 ### 1. Requirements
 ```
@@ -118,20 +119,26 @@ When loading a video, only a number of its frames are loaded. They are chosen in
 1. The frame indices [1,N] are divided into NUM_SEGMENTS even segments. From each segment, FRAMES_PER_SEGMENT consecutive indices are chosen at random.
 This results in NUM_SEGMENTS*FRAMES_PER_SEGMENT chosen indices, whose frames are loaded as PIL images and put into a list and returned when calling
 `dataset[i]`.
+
+### 4. Alternate Video Frame Sampling Methods
+If you do not want to use sparse temporal sampling and instead want to sample a single N-frame continuous
+clip from a video, this is possible. Set `NUM_SEGMENTS=1` and `FRAMES_PER_SEGMENT=N`. Because VideoFrameDataset
+will chose a random start index per segment and take `NUM_SEGMENTS` continuous frames from each sampled start
+index, this will result in a single N-frame continuous clip per video. An example of this is in `demo.py`. 
   
-### 4. Using VideoFrameDataset for training
+### 5. Using VideoFrameDataset for training
 As demonstrated in `demo.py`, we can use PyTorch's `torch.utils.data.DataLoader` class with VideoFrameDataset to take care of shuffling, batching, and more.
-To turn the lists of PIL images returned by VideoFrameDataset into tensors, the transform `video_dataset.imglist_totensor()` can be supplied
+To turn the lists of PIL images returned by VideoFrameDataset into tensors, the transform `video_dataset.ImglistToTensor()` can be supplied
 as the `transform` parameter to VideoFrameDataset. This turns a list of N PIL images into a batch of images/frames of shape `N x CHANNELS x HEIGHT x WIDTH`. 
-We can further chain preprocessing and augmentation functions that act on batches of images onto the end of `imglist_totensor()`.
+We can further chain preprocessing and augmentation functions that act on batches of images onto the end of `ImglistToTensor()`.
   
 As of `torchvision 0.8.0`, all torchvision transforms can now also operate on batches of images, and they apply deterministic or random transformations
 on the batch identically on all images of the batch. Therefore, any torchvision transform can be used here to apply video-uniform preprocessing and augmentation.
 
-### 5. Conclusion
+### 6. Conclusion
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
-### 6. Acknowledgements
+### 7. Acknowledgements
 We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it.
 ```
 @InProceedings{wang2016_TemporalSegmentNetworks,
