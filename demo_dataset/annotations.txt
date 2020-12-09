@@ -1,4 +1,4 @@
-jumping/0001 17 0
-jumping/0002 18 0
-running/0001 15 1
-running/0002 15 1
+jumping/0001 1 17 0
+jumping/0002 1 18 0
+running/0001 1 15 1
+running/0002 1 15 1
