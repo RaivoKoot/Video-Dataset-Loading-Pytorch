@@ -28,7 +28,7 @@ For a demo, visit `demo.py`.
 ### QuickDemo (demo.py)
 ```python
 root = os.path.join(os.getcwd(), 'demo_dataset')  # Folder in which all videos lie in a specific structure
-annotation_file = os.path.join(root, 'annotations.txt')  # A row for each video sample as: (VIDEO_PATH START_FRAME END_FRAME CLASS_INDEX)
+annotation_file = os.path.join(root, 'annotations.txt')  # A row for each video sample as: (VIDEO_PATH START_FRAME END_FRAME CLASS_ID)
 
 """ DEMO 1 WITHOUT IMAGE TRANSFORMS """
 dataset = VideoFrameDataset(
@@ -59,9 +59,10 @@ for image in frames:
 - [3. Video Frame Sampling Method](#3-video-frame-sampling-method)
 - [4. Alternate Video Frame Sampling Methods](#4-alternate-video-frame-sampling-methods)
 - [5. Using VideoFrameDataset for Training](#5-using-videoframedataset-for-training)
-- [6. Conclusion](#6-conclusion)
-- [7. Upcoming Features](#7-upcoming-features)
-- [8. Acknowledgements](#8-acknowledgements)
+- [6. Allowing Multiple Labels per Sample](#6-allowing-multiple-labels-per-sample)
+- [7. Conclusion](#7-conclusion)
+- [8. Upcoming Features](#8-upcoming-features)
+- [9. Acknowledgements](#9-acknowledgements)
 
 ### 1. Requirements
 ```
@@ -71,6 +72,9 @@ torch >= 1.7.0
 python >= 3.6
 ```
 ### 2. Custom Dataset
+(This description explains using custom datasets where each sample has a single class label. If you want to know how to
+use a dataset where a sample can have more than a single class label, read this anyways and then read `6.` below)  
+  
 To use any dataset, two conditions must be met.
 1) The video data must be supplied as RGB frames, each frame saved as an image file. Each video must have its own folder, in which the frames of
 that video lie. The frames of a video inside its folder must be named uniformly with consecutive indices such as `img_00001.jpg` ... `img_00120.jpg`, if there are 120 frames. 
@@ -78,7 +82,7 @@ that video lie. The frames of a video inside its folder must be named uniformly 
    for frames in this example is "img_{:05d}.jpg" (python string formatting, specifying 5 digits after the underscore), and must be supplied to the 
    constructor of VideoFrameDataset as a parameter. Each video folder must lie inside some `root` folder.
 2) To enumerate all video samples in the dataset and their required metadata, a `.txt` annotation file must be manually created that contains a row for each
-video sample or video clip (in case of clips for action recognition for example) in the dataset. The training, validation, and testing datasets must have separate annotation files. Each row must be a space-separated list that contains
+video clip sample in the dataset. The training, validation, and testing datasets must have separate annotation files. Each row must be a space-separated list that contains
 `VIDEO_PATH START_FRAME END_FRAME CLASS_INDEX`. The `VIDEO_PATH` of a video sample should be provided without the `root` prefix of this dataset.
 
 This example project demonstrates this using a dummy dataset inside of `demo_dataset/`, which is the `root` dataset folder of this example. The folder 
@@ -157,15 +161,43 @@ has the same shape as an image batch tensor (BATCH x CHANNELS x HEIGHT x WIDTH),
 REMEMBER:  
 Pytorch transforms are applied to individual dataset samples (in this case a list of PIL images of a video, or a video-frame tensor after `ImglistToTensor()`) before
 batching. So, any transforms used here must expect its input to be a frame tensor of shape `FRAMES x CHANNELS x HEIGHT x WIDTH` or a list of PIL images if `ImglistToTensor()` is not used.
-### 6. Conclusion
+
+### 6. Allowing Multiple Labels per Sample
+Your dataset labels might be more complicated than just a single label id per sample. For example, in the EPIC-KITCHENS dataset
+each video clip has a verb class, noun class, and action class. In this case, each sample is associated with three label ids.
+To accommodate for datasets where a sample can have N integer labels, `annotation.txt` files can be used where each row
+is space separated `PATH,   FRAME_START,    FRAME_END,    LABEL_1_ID,    ...,    LABEL_N_ID`, instead of 
+`PATH,   FRAME_START,    FRAME_END,    LABEL_ID`. The VideoFrameDataset class
+can handle this type of annotation files too, without changing anything apart from the rows in your `annotations.txt`.  
+  
+The `annotations.txt` file for a dataset where multiple clip samples can come from the same video and each sample has
+three labels, would have rows like `PATH,   START_FRAME,    END_FRAME,    LABEL1,    LABEL2,    LABEL3` as seen below
+```
+jumping/0001 1 8 0 2 1
+jumping/0001 5 17 0 10 3
+jumping/0002 1 18 0 5 3
+running/0001 10 15 1 3 3
+running/0001 5 10 1 1 0
+running/0002 1 15 1 12 4
+```
+  
+When you use `torch.utils.data.DataLoader` with VideoFrameDataset to retrieve your batches during
+training, the dataloader then no longer returns batches as a `( (BATCHxFRAMESxHEIGHTxWIDTH) , (BATCH) )` tuple, where the second item is
+just a list/tensor of the batch's labels. Instead, the second item is replaced with the tuple 
+`( (BATCH) ... (BATCH) )` where the first BATCH-sized list gives label_1 for the whole batch, and the last BATCH-sized
+list gives label_n for the whole batch.  
+  
+A demo of this can be found at the end in `demo.py`. It uses the dummy dataset in directory `demo_dataset_multilabel`.
+
+### 7. Conclusion
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
-### 7. Upcoming Features
+### 8. Upcoming Features
 - [x] Add demo for sampling a single continous-frame clip from videos.
-- [ ] Add support for arbitrary labels that are more than just a single integer.
+- [x] Add support for arbitrary labels that are more than just a single integer.
 - [x] Add support for specifying START_FRAME and END_FRAME for a video instead of NUM_FRAMES.
 
-### 8. Acknowledgements
+### 9. Acknowledgements
 We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it
 for general use and compatibility.
 ```
