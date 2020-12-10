@@ -13,11 +13,12 @@ class VideoRecord(object):
     Args:
         root_datapath: the system path to the root folder
                        of the videos.
-        row: A list with four elements where 1) The first
+        row: A list with four or more elements where 1) The first
              element is the path to the video sample's frames excluding
              the root_datapath prefix 2) The  second element is the starting frame id of the video
              3) The third element is the inclusive ending frame id of the video
              4) The fourth element is the label index.
+             5) any following elements are labels in the case of multi-label classification
     """
     def __init__(self, row, root_datapath):
         self._data = row
@@ -30,17 +31,23 @@ class VideoRecord(object):
 
     @property
     def num_frames(self):
-        return self.end_frame() - self.start_frame() + 1  # +1 because end frame is inclusive
-
+        return self.end_frame - self.start_frame + 1  # +1 because end frame is inclusive
+    @property
     def start_frame(self):
         return int(self._data[1])
 
+    @property
     def end_frame(self):
         return int(self._data[2])
 
     @property
     def label(self):
-        return int(self._data[3])
+        # just one label_id
+        if len(self._data) == 4:
+            return int(self._data[3])
+        # sample associated with multiple labels
+        else:
+            return [int(label_id) for label_id in self._data[3:]]
 
 class VideoFrameDataset(torch.utils.data.Dataset):
     r"""
@@ -74,6 +81,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         img_001.jpg ... img_059.jpg.
         For enumeration and annotations, this class expects to receive
         the path to a .txt file where each video sample has a row with four
+        (or more in the case of multi-label, see README on Github)
         space separated values:
         ``VIDEO_FOLDER_PATH     START_FRAME      END_FRAME      LABEL_INDEX``.
         ``VIDEO_FOLDER_PATH`` is expected to be the path of a video folder
@@ -225,7 +233,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
             2) An integer denoting the video label.
         """
 
-        indices = indices + record.start_frame()
+        indices = indices + record.start_frame
         images = list()
         image_indices = list()
         for seg_ind in indices:
