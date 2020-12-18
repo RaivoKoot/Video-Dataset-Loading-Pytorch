@@ -247,7 +247,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
 
         # sort images by index in case of edge cases where segments overlap each other because the overall
         # video is too short for num_segments*frames_per_segment indices.
-        _, images = (list(sorted_list) for sorted_list in zip(*sorted(zip(image_indices, images))))
+        # _, images = (list(sorted_list) for sorted_list in zip(*sorted(zip(image_indices, images))))
 
         if self.transform is not None:
             images = self.transform(images)
