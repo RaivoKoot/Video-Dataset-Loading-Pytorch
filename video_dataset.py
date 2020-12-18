@@ -242,7 +242,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
                 seg_img = self._load_image(record.path, frame_index)
                 images.extend(seg_img)
                 image_indices.append(frame_index)
-                if frame_index < record.num_frames:
+                if frame_index < record.end_frame:
                     frame_index += 1
 
         # sort images by index in case of edge cases where segments overlap each other because the overall
