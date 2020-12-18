@@ -196,6 +196,7 @@ A proper code-based explanation on how to use VideoFrameDataset for training is 
 - [x] Add demo for sampling a single continous-frame clip from videos.
 - [x] Add support for arbitrary labels that are more than just a single integer.
 - [x] Add support for specifying START_FRAME and END_FRAME for a video instead of NUM_FRAMES.
+- [ ] Improve the handling of edge cases where NUM_FRAMES*FRAM_PER_SEG (or similar) might be larger than the number of frames in a video.
 
 ### 9. Acknowledgements
 We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it
