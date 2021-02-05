@@ -9,7 +9,7 @@ getting familiar with these first through [this](https://pytorch.org/tutorials/b
 [this](https://github.com/utkuozbulak/pytorch-custom-dataset-examples). 
 
 ### Overview: This example demonstrates the use of `VideoFrameDataset`
-The VideoFrameDataset class serves to `easily`, `efficiently` and `effectively` load video samples from video datasets in PyTorch.
+The VideoFrameDataset class (an implementation of `torch.utils.data.Dataset`) serves to `easily`, `efficiently` and `effectively` load video samples from video datasets in PyTorch.
 1) Easily because this dataset class can be used with custom datasets with minimum effort and no modification. The class merely expects the 
 video dataset to have a certain structure on disk and expects a .txt annotation file that enumerates each video sample. Details on this 
 can be found below and at `https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html`.
