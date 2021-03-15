@@ -17,7 +17,7 @@ Video Dataset Loading in Pytorch !
 
 Efficient Video Dataset Loading, Preprocessing, and Augmentation
 ========================================================================
-To get the most up-to-date README, please visit `Github <https://github.com/RaivoKoot/Video-Dataset-Loading-Pytorch>`__
+To get the most up-to-date README, please visit `Github: Video Dataset Loading Pytorch <https://github.com/RaivoKoot/Video-Dataset-Loading-Pytorch>`__
 
 Author: `Raivo Koot <https://github.com/RaivoKoot>`__
 
