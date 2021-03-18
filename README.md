@@ -1,5 +1,5 @@
 [![Documentation Status](https://readthedocs.org/projects/video-dataset-loading-pytorch/badge/?version=latest)](https://video-dataset-loading-pytorch.readthedocs.io/en/latest/?badge=latest) 
-# Efficient Video Dataset Loading, Preprocessing, and Augmentation in PyTorch
+# Efficient Video Dataset Loading and Augmentation in PyTorch
 Author: [Raivo Koot](https://github.com/RaivoKoot)  
 https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html  
 If you find the code useful, please star the repository.  
