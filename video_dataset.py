@@ -4,6 +4,15 @@ import numpy as np
 from PIL import Image
 from torchvision import transforms
 import torch
+from pathlib import Path
+
+KNOWN_FOURCC = {
+    'NV12': {
+        'format': 'yuv',
+        'type': 'planar',
+        'dtype': np.dtype('>i1'),
+        'chroma_subsampling': (2, 0) }
+}
 
 class VideoRecord(object):
     """
@@ -20,25 +29,93 @@ class VideoRecord(object):
              4) The fourth element is the label index.
              5) any following elements are labels in the case of multi-label classification
     """
-    def __init__(self, row, root_datapath):
+    def __init__(self, row, root_datapath, file_tamplate, video_meta):
         self._data = row
         self._path = os.path.join(root_datapath, row[0])
+        self.file_template = file_tamplate
+        self.video_meta = video_meta
+        self.files_frames = [self._get_frames_per_file(i) for i in range(self.start_file_idx, self.start_file_idx + self.num_files)]
 
+    def _get_file_size(self, idx: int) -> int:
+        return (Path(self.path) / Path(self.file_template.format(idx))).stat().st_size
+
+    def _get_frames_per_file(self, file_idx: int) -> int:
+        return self._get_file_size(file_idx) // self.frame_size
+
+    def __len__(self):
+        return self.num_frames
+
+    def __getitem__(self, key):
+        # based on https://stackoverflow.com/questions/675140/python-class-getitem-negative-index-handling
+        # Do this until the index is greater than 0.
+        while key < 0:
+            # Index is a negative, so addition will subtract.
+            key += len(self)
+        if key >= len(self):
+            raise IndexError
+
+        absolute_key = key + self.start_frame
+        tmp = 0
+        for i, size in enumerate(self.files_frames):
+            if tmp + size > absolute_key:
+                break
+            tmp += size
+        offset = (key - tmp + self.start_frame) * self.frame_size
+        file_idx = i + self.start_file_idx
+        file_path = Path(self._path) / Path(self.file_template.format(file_idx))
+        return file_path, offset, (self.video_meta['width'] , self.video_meta['height'])
+
+
+    @property
+    def frame_size(self):
+        if self.video_meta['fourcc'].upper() in ['NV12']:
+            #data_type = np.dtype('>i1')
+            pixel_count = self.video_meta['width'] * self.video_meta['height'] 
+            y_size = 1 * pixel_count
+            fourcc = KNOWN_FOURCC[self.video_meta['fourcc'].upper()]
+            chroma_factor = sum(fourcc['chroma_subsampling'])/8
+            u_size = chroma_factor * pixel_count
+            v_size = chroma_factor * pixel_count
+
+            frame_size = int(y_size + u_size + v_size)
+            return frame_size
+        else:
+            raise NotImplementedError
 
     @property
     def path(self):
         return self._path
 
     @property
+    def num_files(self):
+        return self.end_file_idx - self.start_file_idx + 1  # +1 because end frame is inclusive
+
+    @property
     def num_frames(self):
-        return self.end_frame - self.start_frame + 1  # +1 because end frame is inclusive
+        ret = sum(self.files_frames[:-1]) + self.end_frame - self.start_frame + 1
+        return ret
+    
+    @property
+    def start_file_idx(self):
+        return int(self._data[1].split('.', 1)[0])
+
     @property
     def start_frame(self):
-        return int(self._data[1])
+        if '.' in self._data[1]:
+            return int(self._data[1].split('.', 1)[1])
+        else:
+            return 0
+
+    @property
+    def end_file_idx(self):
+        return int(self._data[2].split('.', 1)[0])
 
     @property
     def end_frame(self):
-        return int(self._data[2])
+        if '.' in self._data[2]:
+            return int(self._data[2].split('.', 1)[1])
+        else:
+            return self.files_frames[-1] - 1
 
     @property
     def label(self):
@@ -48,6 +125,9 @@ class VideoRecord(object):
         # sample associated with multiple labels
         else:
             return [int(label_id) for label_id in self._data[3:]]
+
+    def __repr__(self) -> str:
+        return str(type(self)) + f'{self._data}'
 
 class VideoFrameDataset(torch.utils.data.Dataset):
     r"""
@@ -77,7 +157,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         This class relies on receiving video data in a structure where
         inside a ``ROOT_DATA`` folder, each video lies in its own folder,
         where each video folder contains the frames of the video as
-        individual files with a naming convention such as
+        individual files or raw video file with a naming convention such as
         img_001.jpg ... img_059.jpg.
         For enumeration and annotations, this class expects to receive
         the path to a .txt file where each video sample has a row with four
@@ -88,6 +168,8 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         excluding the ``ROOT_DATA`` prefix. For example, ``ROOT_DATA`` might
         be ``home\data\datasetxyz\videos\``, inside of which a ``VIDEO_FOLDER_PATH``
         might be ``jumping\0052\`` or ``sample1\`` or ``00053\``.
+        In case of raw video files, START_FRAME and END_FRAME may denote whole 
+        file or a specific frame in the file e.g. ``4.123`` means file no. 4, frame no. 123. 
 
     Args:
         root_path: The root path in which video folders lie.
@@ -103,6 +185,8 @@ class VideoFrameDataset(torch.utils.data.Dataset):
                             consecutive frames are loaded.
         imagefile_template: The image filename template that video frame files
                             have inside of their video folders as described above.
+        raw_video_format: RAW video format name according to `FOURCC <https://www.fourcc.org/>`
+        raw_video_size: a tuple containing width and height of a RAW frame
         transform: Transform pipeline that receives a list of PIL images/frames.
         random_shift: Whether the frames from each segment should be taken
                       consecutively starting from the center of the segment, or
@@ -118,11 +202,20 @@ class VideoFrameDataset(torch.utils.data.Dataset):
                  num_segments: int = 3,
                  frames_per_segment: int = 1,
                  imagefile_template: str='img_{:05d}.jpg',
+                 raw_video_format: str = None,
+                 raw_video_size = None,
                  transform = None,
                  random_shift: bool = True,
                  test_mode: bool = False):
         super(VideoFrameDataset, self).__init__()
 
+        self.video_meta = {
+            'fourcc': raw_video_format,
+            'width': raw_video_size[0],
+            'height': raw_video_size[1]
+        }
+        self.raw_video_format = raw_video_format
+        self.raw_video_size = raw_video_size
         self.root_path = root_path
         self.annotationfile_path = annotationfile_path
         self.num_segments = num_segments
@@ -134,11 +227,33 @@ class VideoFrameDataset(torch.utils.data.Dataset):
 
         self._parse_list()
 
-    def _load_image(self, directory, idx):
-        return [Image.open(os.path.join(directory, self.imagefile_template.format(idx))).convert('RGB')]
+    def _load_image(self, file_path, offset, size):
+        if not self.raw_video_format:
+            return [Image.open(file_path).convert('RGB')]
+        else:
+            if self.raw_video_format.upper() in KNOWN_FOURCC:
+                fourcc = KNOWN_FOURCC[self.raw_video_format.upper()]
+                data_type = fourcc['dtype']
+                y_size = 1 * size[0] * size[1]
+                chroma_plane_size = y_size // 4
+
+                y_data = np.fromfile(file_path, data_type, y_size, offset=offset).reshape( (size[1], size[0]) )
+                cb_data = np.fromfile(file_path, data_type, chroma_plane_size, offset=offset+y_size).reshape( (size[1] // 2, size[0] // 2 ) )
+                cb_data = cb_data.repeat(2, axis=0)
+                cb_data = cb_data.repeat(2, axis=1)
+                cr_data = np.fromfile(file_path, data_type, chroma_plane_size, offset=offset+y_size+chroma_plane_size).reshape( (size[1]//2, size[0]//2 ) )
+                cr_data = cr_data.repeat(2, axis=0)
+                cr_data = cr_data.repeat(2, axis=1)
+
+                ycbcr_data = np.dstack((y_data, cb_data, cr_data)) 
+
+                return [Image.fromarray(ycbcr_data, mode='YCbCr')]
+            else:                
+                raise NotImplementedError
 
     def _parse_list(self):
-        self.video_list = [VideoRecord(x.strip().split(' '), self.root_path) for x in open(self.annotationfile_path)]
+        self.video_list = [VideoRecord(x.strip().split(' '), self.root_path, self.imagefile_template, self.video_meta) for x in open(self.annotationfile_path)]
+        print(self.video_list)
 
     def _sample_indices(self, record):
         """
@@ -225,25 +340,23 @@ class VideoFrameDataset(torch.utils.data.Dataset):
 
         Args:
             record: VideoRecord denoting a video sample.
-            indices: Indices at which to load video frames from.
+            indices: Indices at which to load video frames from. (ndarray)
         Returns:
             1) A list of PIL images or the result
             of applying self.transform on this list if
             self.transform is not None.
             2) An integer denoting the video label.
         """
-
-        indices = indices + record.start_frame
         images = list()
-        image_indices = list()
         for seg_ind in indices:
             frame_index = int(seg_ind)
             for i in range(self.frames_per_segment):
-                seg_img = self._load_image(record.path, frame_index)
+                file_path, data_offset, frame_size = record[i]
+                seg_img = self._load_image(file_path, data_offset, frame_size)
                 images.extend(seg_img)
-                image_indices.append(frame_index)
-                if frame_index < record.end_frame:
-                    frame_index += 1
+                # image_indices.append(frame_index)
+                # if frame_index < record.end_frame:
+                #     frame_index += 1
 
         # sort images by index in case of edge cases where segments overlap each other because the overall
         # video is too short for num_segments*frames_per_segment indices.
