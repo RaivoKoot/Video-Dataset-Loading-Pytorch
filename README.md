@@ -193,7 +193,7 @@ A demo of this can be found at the end in `demo.py`. It uses the dummy dataset i
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
 ### 8. Upcoming Features
-- [ ] Include compatible annotation files for common datasets, such as Something-Something-V2 and EPIC-KITCHENS-100, so that users do not need to spend their own time converting those datasets' annotation files to be compatible with this repository.
+- [ ] Include compatible annotation files for common datasets, such as Something-Something-V2 and EPIC-KITCHENS-100, so that users do not need to spend their own time converting those datasets' annotation files to be compatible with this repository. (coming in the next few days, as of May 20 2021)
 - [x] Add demo for sampling a single continous-frame clip from videos.
 - [x] Add support for arbitrary labels that are more than just a single integer.
 - [x] Add support for specifying START_FRAME and END_FRAME for a video instead of NUM_FRAMES.
