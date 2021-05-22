@@ -12,8 +12,11 @@ the RGB frames of that video. For this, you can use
 the script videos_to_frames.py.
 """
 
+# the official Something Something V2 annotations file, either training or validation.
 raw_annotations = 'something-something-v2-validation.json'
+# the name of the output file
 out_file = 'something-something-v2-validation-processed.txt'
+# the official Something Something V2 label file, that specifies a mapping from TEXT_LABEL -> CLASS_ID
 labels_file = 'something-something-v2-labels.json'
 
 rgb_root = '../rgb/'
