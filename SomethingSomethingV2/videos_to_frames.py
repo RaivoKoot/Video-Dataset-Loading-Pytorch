@@ -43,8 +43,11 @@ def thread_job(queue, video_path, rgb_out_path, file_extension='.webm'):
 
 
 if __name__ == '__main__':
+    # the path to the folder which contains all video files (mp4, webm, or other)
     video_path = 'videos'
+    # the root output path where RGB frame folders should be created
     rgb_out_path = 'rgb'
+    # the file extension that the videos have
     file_extension = '.webm'
 
     video_filenames = os.listdir(video_path)
