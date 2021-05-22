@@ -194,7 +194,7 @@ A demo of this can be found at the end in `demo.py`. It uses the dummy dataset i
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
 ### 8. Something Something V2 & EPIC-KITCHENS-100
-After you have read Section 1 to 7, this repository also contains easy pre-made conversion scripts to get you instantly started with the Something Something V2 dataset and the EPIC-KITCHENS-100 dataset. To get started with either, read the README inside the `EPIC-KITCHENS-100` or `SomethingSomethingV2` directory.
+After you have read Section 1 to 7, this repository also contains easy pre-made conversion scripts and annotation files to get you instantly started with the Something Something V2 dataset and the EPIC-KITCHENS-100 dataset. To get started with either, read the README inside the `EPIC-KITCHENS-100` or `SomethingSomethingV2` directory.
 
 ### 9. Upcoming Features
 - [x] Include compatible annotation files for common datasets, such as Something-Something-V2, EPIC-KITCHENS-100 and Kinetics, so that users do not need to spend their own time converting those datasets' annotation files to be compatible with this repository.
