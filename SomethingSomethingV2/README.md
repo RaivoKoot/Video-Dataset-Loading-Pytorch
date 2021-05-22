@@ -15,7 +15,7 @@ To use VideoFrameDataset with Something Something V2, we need to
 Doing (1) and (2) from above, is very easy if you use the python scripts provided in this directory.
 - For (1), run the script `videos_to_frames.py` and make sure that you set the file paths
 correctly inside of the script.
-- For (2), run the script `raw_annotations_to_processed_annotations.py` and make sure that you
+- For (2), run the script `original_annotations_to_processed_annotations.py` and make sure that you
 set the file paths correctly inside of the script. You also must have completed step (1),
 before you are able to run this script. Run this script once for training and once for validation 
 annotations.

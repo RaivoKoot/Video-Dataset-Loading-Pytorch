@@ -2,7 +2,7 @@ import json
 import os
 
 """
-This script takes in the raw json annotation files for 
+This script takes in the original json annotation files for 
 SomethingSomethingV2 and turns them into annotation.txt files
 that are compatible with this repository's dataloader VideoFrameDataset.
 
@@ -10,6 +10,8 @@ Running this script requires that you already have the SomethingSomethingV2
 videos on disk as RGB frames, where each video has its own folder, containing
 the RGB frames of that video. For this, you can use 
 the script videos_to_frames.py.
+
+Modify the three filepaths below and then run this script.
 """
 
 # the official Something Something V2 annotations file, either training or validation.
