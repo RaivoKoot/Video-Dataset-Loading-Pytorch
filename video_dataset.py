@@ -138,7 +138,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         return [Image.open(os.path.join(directory, self.imagefile_template.format(idx))).convert('RGB')]
 
     def _parse_list(self):
-        self.video_list = [VideoRecord(x.strip().split(' '), self.root_path) for x in open(self.annotationfile_path)]
+        self.video_list = [VideoRecord(x.strip().split(), self.root_path) for x in open(self.annotationfile_path)]
 
     def _sample_indices(self, record):
         """
