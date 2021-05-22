@@ -61,7 +61,7 @@ for image in frames:
 - [5. Using VideoFrameDataset for Training](#5-using-videoframedataset-for-training)
 - [6. Allowing Multiple Labels per Sample](#6-allowing-multiple-labels-per-sample)
 - [7. Conclusion](#7-conclusion)
-- [8. Something Something V2 & EPIC-KITCHENS-100](#8-something-something-v2-&-epickitchens100)
+- [8. Something Something V2 & EPIC-KITCHENS-100](#8-something-something-v2--epic-kitchens-100)
 - [9. Upcoming Features](#9-upcoming-features)
 - [10. Acknowledgements](#10-acknowledgements)
 
