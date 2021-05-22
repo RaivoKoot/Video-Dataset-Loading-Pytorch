@@ -11,6 +11,8 @@ folder.
 It can be used to turn SomethingSomethingV2, which comes as 
 many ".webm" files, into an RGB folder for each ".webm" file.
 Uses multithreading to extract frames faster.
+
+Modify the two filepaths at the bottom and then run this script.
 """
 
 
