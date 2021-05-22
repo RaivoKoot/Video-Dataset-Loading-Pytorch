@@ -61,8 +61,9 @@ for image in frames:
 - [5. Using VideoFrameDataset for Training](#5-using-videoframedataset-for-training)
 - [6. Allowing Multiple Labels per Sample](#6-allowing-multiple-labels-per-sample)
 - [7. Conclusion](#7-conclusion)
-- [8. Upcoming Features](#8-upcoming-features)
-- [9. Acknowledgements](#9-acknowledgements)
+- [8. Something Something V2 & EPIC-KITCHENS-100](#8-something-something-v2-&-epickitchens100)
+- [9. Upcoming Features](#9-upcoming-features)
+- [10. Acknowledgements](#10-acknowledgements)
 
 ### 1. Requirements
 ```
@@ -192,8 +193,11 @@ A demo of this can be found at the end in `demo.py`. It uses the dummy dataset i
 ### 7. Conclusion
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
-### 8. Upcoming Features
-- [ ] Include compatible annotation files for common datasets, such as Something-Something-V2, EPIC-KITCHENS-100 and Kinetics, so that users do not need to spend their own time converting those datasets' annotation files to be compatible with this repository. (coming in the next few days, as of May 20 2021)
+### 8. Something Something V2 & EPIC-KITCHENS-100
+After you have read Section 1 to 7, this repository also contains easy pre-made conversion scripts to get you instantly started with the Something Something V2 dataset and the EPIC-KITCHENS-100 dataset. To get started with either, read the README inside the `EPIC-KITCHENS-100` or `SomethingSomethingV2` directory.
+
+### 9. Upcoming Features
+- [x] Include compatible annotation files for common datasets, such as Something-Something-V2, EPIC-KITCHENS-100 and Kinetics, so that users do not need to spend their own time converting those datasets' annotation files to be compatible with this repository.
 - [x] Add demo for sampling a single continous-frame clip from videos.
 - [x] Add support for arbitrary labels that are more than just a single integer.
 - [x] Add support for specifying START_FRAME and END_FRAME for a video instead of NUM_FRAMES.
@@ -201,7 +205,7 @@ A proper code-based explanation on how to use VideoFrameDataset for training is 
 - [ ] Clean up some of the internal code that is still very messy, which was taken from the below codebase.
 - [ ] Create a version of this implementation that uses OpenCV instead of PIL for frame loading, so that you can use Albumentation transforms instead of Torchvision transforms.
 
-### 9. Acknowledgements
+### 10. Acknowledgements
 We thank the authors of TSN for their [codebase](https://github.com/yjxiong/tsn-pytorch), from which we took VideoFrameDataset and adapted it
 for general use and compatibility.
 ```
