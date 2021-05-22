@@ -1,6 +1,8 @@
 # Using EPIC-KITCHENS-100
-This directory contains helpers to use the [EPIC-KITCHENS-100](https://epic-kitchens.github.io/2021) dataset with this 
-repository's VideoFrameDataset dataloader.
+This directory contains pre-made annotation files to use the [EPIC-KITCHENS-100](https://epic-kitchens.github.io/2021) dataset with this 
+repository's VideoFrameDataset dataloader. The two `.txt` files in this directory are the training and validation annotation files that you can use for EPIC-KITCHENS-100 with VideoFrameDataset. That's it! Reading `(1) Dataset Overview` below can also help you understand the EPIC-KITCHENS-100 files.
+
+If you need/want to recreate these processed annotation files yourself, read the rest of this README below.
 
 ### 1. Dataset Overview
 When you download the EPIC-KITCHENS-100 dataset, it comes in the following format:
