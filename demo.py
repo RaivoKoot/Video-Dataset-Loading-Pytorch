@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
 
     frame_tensor = denormalize(frame_tensor)
-    plot_video(rows=1, cols=5, frame_list=frames, plot_width=15., plot_height=3.)
+    plot_video(rows=1, cols=5, frame_list=frame_tensor, plot_width=15., plot_height=3.)
 
 
 
