@@ -12,7 +12,7 @@ getting familiar with these first through [this](https://pytorch.org/tutorials/b
 The VideoFrameDataset class (an implementation of `torch.utils.data.Dataset`) serves to `easily`, `efficiently` and `effectively` load video samples from video datasets in PyTorch.
 1) Easily because this dataset class can be used with custom datasets with minimum effort and no modification. The class merely expects the 
 video dataset to have a certain structure on disk and expects a .txt annotation file that enumerates each video sample. Details on this 
-can be found below and at `https://video-dataset-loading-pytorch.readthedocs.io/en/latest/VideoDataset.html`. Pre-made annotation files are also provided for [Something Something V2](https://20bn.com/datasets/something-something) and [EPIC-KITCHENS-100](https://epic-kitchens.github.io/2021).
+can be found below. Pre-made annotation files are also provided for [Something Something V2](https://20bn.com/datasets/something-something) and [EPIC-KITCHENS-100](https://epic-kitchens.github.io/2021).
 2) Efficiently because the video loading pipeline that this class implements is very fast. This minimizes GPU waiting time during training by eliminating input bottlenecks
 that can slow down training time by several folds.
 3) Effectively because the implemented sampling strategy for video frames is very strong. Video training using the entire sequence of 
