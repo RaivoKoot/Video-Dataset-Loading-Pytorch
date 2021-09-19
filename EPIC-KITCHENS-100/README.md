@@ -19,6 +19,7 @@ set the file paths correctly inside of the script. Run this script once for trai
 annotations.
 
 ### 3. Done
-That's it! You should then have a folder on your disk `RGB` that contains all videos in individual RGB
-frames, and the two annotation files. This is all you need to use VideoFrameDataset and start training
-on EPIC-KITCHENS-100!
+That's it! You now have all you need to use VideoFrameDataset and start training
+on EPIC-KITCHENS-100:
+- two annotation text files
+- a folder called `RGB` that contains the frames of all videos
