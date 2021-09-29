@@ -8,6 +8,9 @@ If you are completely unfamiliar with loading datasets in PyTorch using `torch.u
 getting familiar with these first through [this](https://pytorch.org/tutorials/beginner/data_loading_tutorial.html) or 
 [this](https://github.com/utkuozbulak/pytorch-custom-dataset-examples). 
 
+### In a Nutshell
+Video-Dataset-Loading-Pytorch provides easy and efficient video dataset loading in PyTorch. It makes working with video datasets easy and accessible. It only requires you to have your video dataset in a certain format on disk and takes care of the rest. No complicated dependencies and it supports native Torchvision video data augmentation. Video-Dataset-Loading-Pytorch provides the lowest entry barrier for setting up deep learning training loops on video data.
+
 ### Overview: This small library solely provides the class `VideoFrameDataset`
 The VideoFrameDataset class (an implementation of `torch.utils.data.Dataset`) serves to `easily`, `efficiently` and `effectively` load video samples from video datasets in PyTorch.
 1) Easily because this dataset class can be used with custom datasets with minimum effort and no modification. The class merely expects the 
