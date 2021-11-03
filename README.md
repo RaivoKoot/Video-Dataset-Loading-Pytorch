@@ -15,7 +15,7 @@ Video-Dataset-Loading-Pytorch provides the lowest entry barrier for setting up d
 The VideoFrameDataset class (an implementation of `torch.utils.data.Dataset`) serves to `easily`, `efficiently` and `effectively` load video samples from video datasets in PyTorch.
 1) Easily because this dataset class can be used with custom datasets with minimum effort and no modification. The class merely expects the 
 video dataset to have a certain structure on disk and expects a .txt annotation file that enumerates each video sample. Details on this 
-can be found below. Pre-made annotation files are also provided for [Something Something V2](https://20bn.com/datasets/something-something) and [EPIC-KITCHENS-100](https://epic-kitchens.github.io/2021).
+can be found below. Pre-made annotation files and preparation scripts are also provided for [Kinetics 400](https://github.com/cvdfoundation/kinetics-dataset), [Something Something V2](https://20bn.com/datasets/something-something) and [EPIC-KITCHENS-100](https://epic-kitchens.github.io/2021).
 2) Efficiently because the video loading pipeline that this class implements is very fast. This minimizes GPU waiting time during training by eliminating input bottlenecks
 that can slow down training time by several folds.
 3) Effectively because the implemented sampling strategy for video frames is very strong. Video training using the entire sequence of 
@@ -64,7 +64,7 @@ for image in frames:
 - [5. Using VideoFrameDataset for Training](#5-using-videoframedataset-for-training)
 - [6. Allowing Multiple Labels per Sample](#6-allowing-multiple-labels-per-sample)
 - [7. Conclusion](#7-conclusion)
-- [8. Something Something V2 & EPIC-KITCHENS-100](#8-something-something-v2--epic-kitchens-100)
+- [8. Kinetics 400 & Something Something V2 & EPIC-KITCHENS-100](#8-kinetics-400--something-something-v2--epic-kitchens-100)
 - [9. Upcoming Features](#9-upcoming-features)
 - [10. Acknowledgements](#10-acknowledgements)
 
@@ -196,8 +196,8 @@ A demo of this can be found at the end in `demo.py`. It uses the dummy dataset i
 ### 7. Conclusion
 A proper code-based explanation on how to use VideoFrameDataset for training is provided in `demo.py`
 
-### 8. Something Something V2 & EPIC-KITCHENS-100
-After you have read Section 1 to 7, this repository also contains easy pre-made conversion scripts and annotation files to get you instantly started with the Something Something V2 dataset and the EPIC-KITCHENS-100 dataset. To get started with either, read the README inside the `EPIC-KITCHENS-100` or `SomethingSomethingV2` directory.
+### 8. Kinetics 400 & Something Something V2 & EPIC-KITCHENS-100
+After you have read Section 1 to 7, this repository also contains easy pre-made conversion scripts and annotation files to get you instantly started with the Kinetics 400 dataset, Something Something V2 dataset, and the EPIC-KITCHENS-100 dataset. To get started with either, read the README inside the `Kinetics400`, `EPIC-KITCHENS-100` or `SomethingSomethingV2` directory.
 
 ### 9. Upcoming Features
 - [x] Include compatible annotation files for common datasets, such as Something-Something-V2, EPIC-KITCHENS-100 and Kinetics, so that users do not need to spend their own time converting those datasets' annotation files to be compatible with this repository.
