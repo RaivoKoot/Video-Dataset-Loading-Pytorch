@@ -133,8 +133,36 @@ running/0001 5 10 1
 running/0002 1 15 1
 ```
 (END_FRAME is inclusive)  
+
+Another, simpler, example of the way your dataset's RGB frames can be organized on disk is the following:
+```
+demo_dataset
+│
+├───annotations.txt
+└───rgb 
+     ├───video_1
+     │     ├───img_00001.jpg
+     │     .
+     │     └───img_00017.jpg
+     ├───video_2
+     │     ├───img_00001.jpg
+     │     .
+     │     └───img_00044.jpg
+     └───video_3
+           ├───img_00001.jpg
+           .
+           └───img_00023.jpg
+
+ 
+```
+The accompanying annotation `.txt` file contains the following rows (PATH, START_FRAME, END_FRAME, LABEL_ID)
+```
+video_1 1 17 1
+video_2 1 44 0
+video_3 1 23 0
+```
   
-Instantiating a VideoFrameDataset with the `root_path` parameter pointing to `demo_dataset`, the `annotationsfile_path` parameter pointing to the annotation file, and
+Instantiating a VideoFrameDataset with the `root_path` parameter pointing to `demo_dataset/rgb/`, the `annotationsfile_path` parameter pointing to the annotation file `demo_dataset/annotations.txt`, and
 the `imagefile_template` parameter as "img_{:05d}.jpg", is all that it takes to start using the VideoFrameDataset class.
 
 ### 3. Video Frame Sampling Method
