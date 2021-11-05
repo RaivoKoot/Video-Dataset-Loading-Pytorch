@@ -16,8 +16,7 @@ The VideoFrameDataset class (an implementation of `torch.utils.data.Dataset`) se
 1) Easily because this dataset class can be used with custom datasets with minimum effort and no modification. The class merely expects the 
 video dataset to have a certain structure on disk and expects a .txt annotation file that enumerates each video sample. Details on this 
 can be found below. Pre-made annotation files and preparation scripts are also provided for [Kinetics 400](https://github.com/cvdfoundation/kinetics-dataset), [Something Something V2](https://20bn.com/datasets/something-something) and [Epic Kitchens 100](https://epic-kitchens.github.io/2021).
-2) Efficiently because the video loading pipeline that this class implements is very fast. This minimizes GPU waiting time during training by eliminating input bottlenecks
-that can slow down training time by several folds.
+2) Efficiently because the video loading pipeline that this class implements is very fast. This minimizes GPU waiting time during training by eliminating CPU input bottlenecks that can slow down training time by several folds.
 3) Effectively because the implemented sampling strategy for video frames is very strong. Video training using the entire sequence of 
 video frames (often several hundred) is too memory and compute intense. Therefore, this implementation samples frames evenly from the video (sparse temporal sampling) 
 so that the loaded frames represent every part of the video, with support for arbitrary and differing video lengths within the same dataset. 
