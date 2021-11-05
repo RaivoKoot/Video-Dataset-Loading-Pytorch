@@ -13,7 +13,7 @@ To use VideoFrameDataset with Kinetics 400, we need to
 
 ### 2. Processing
 Doing (1) and (2) from above, is very easy if you use the python scripts provided in this directory.
-- For (1), make sure that all `.mp4` files (trainin, validation, and testing) are located in a single and the same
+- For (1), make sure that all `.mp4` files (training, validation, and testing) are located in a single and the same
 directory. Run the script `videos_to_frames.py` and make sure that you set the file paths
 correctly inside of the script. This will probably take ~10 hours for Kinetics 400.
 - For (2), run the script `process_annotation_file.py` once for each annotation `.csv` and make sure that you
