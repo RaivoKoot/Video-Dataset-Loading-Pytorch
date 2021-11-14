@@ -133,12 +133,18 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         self.test_mode = test_mode
 
         self._parse_list()
+        self._sanity_check_samples()
 
     def _load_image(self, directory, idx):
         return [Image.open(os.path.join(directory, self.imagefile_template.format(idx))).convert('RGB')]
 
     def _parse_list(self):
         self.video_list = [VideoRecord(x.strip().split(), self.root_path) for x in open(self.annotationfile_path)]
+
+    def _sanity_check_samples(self):
+        for record in self.video_list:
+            if record.num_frames <= 0 or record.start_frame == record.end_frame:
+                print(f"\nDataset Warning: data sample {record.path} seems to have zero RGB frames on disk!\n")
 
     def _sample_indices(self, record):
         """
