@@ -106,12 +106,8 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         imagefile_template: The image filename template that video frame files
                             have inside of their video folders as described above.
         transform: Transform pipeline that receives a list of PIL images/frames.
-        random_shift: Whether the frames from each segment should be taken
-                      consecutively starting from the center of the segment, or
-                      consecutively starting from a random location inside the
-                      segment range.
-        test_mode: Whether this is a test dataset. If so, chooses
-                   frames from segments with random_shift=False.
+        test_mode: If True, frames are taken from the center of each
+                   segment, instead of a random location in each segment.
 
     """
     def __init__(self,
