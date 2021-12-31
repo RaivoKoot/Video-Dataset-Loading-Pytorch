@@ -40,7 +40,6 @@ dataset = VideoFrameDataset(
     frames_per_segment=1,
     imagefile_template='img_{:05d}.jpg',
     transform=None,
-    random_shift=True,
     test_mode=False
 )
 

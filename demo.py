@@ -8,7 +8,7 @@ import os
 """
 Ignore this function and look at "main" below.
 """
-def plot_video(rows, cols, frame_list, plot_width, plot_height):
+def plot_video(rows, cols, frame_list, plot_width, plot_height, title: str):
     fig = plt.figure(figsize=(plot_width, plot_height))
     grid = ImageGrid(fig, 111,  # similar to subplot(111)
                      nrows_ncols=(rows, cols),  # creates 2x2 grid of axes
@@ -19,6 +19,7 @@ def plot_video(rows, cols, frame_list, plot_width, plot_height):
         # Iterating over the grid returns the Axes.
         ax.imshow(im)
         ax.set_title(index)
+    plt.suptitle(title)
     plt.show()
 
 if __name__ == '__main__':
@@ -38,7 +39,6 @@ if __name__ == '__main__':
     annotation_file = os.path.join(videos_root, 'annotations.txt')
 
 
-
     """ DEMO 1 WITHOUT IMAGE TRANSFORMS """
     dataset = VideoFrameDataset(
         root_path=videos_root,
@@ -47,7 +47,6 @@ if __name__ == '__main__':
         frames_per_segment=1,
         imagefile_template='img_{:05d}.jpg',
         transform=None,
-        random_shift=True,
         test_mode=False
     )
 
@@ -55,7 +54,8 @@ if __name__ == '__main__':
     frames = sample[0]  # list of PIL images
     label = sample[1]   # integer label
 
-    plot_video(rows=1, cols=5, frame_list=frames, plot_width=15., plot_height=3.)
+    plot_video(rows=1, cols=5, frame_list=frames, plot_width=15., plot_height=3.,
+               title='Evenly Sampled Frames, No Video Transform')
 
 
 
@@ -72,7 +72,6 @@ if __name__ == '__main__':
         frames_per_segment=9,
         imagefile_template='img_{:05d}.jpg',
         transform=None,
-        random_shift=True,
         test_mode=False
     )
 
@@ -80,7 +79,8 @@ if __name__ == '__main__':
     frames = sample[0]  # list of PIL images
     label = sample[1]  # integer label
 
-    plot_video(rows=3, cols=3, frame_list=frames, plot_width=10., plot_height=5.)
+    plot_video(rows=3, cols=3, frame_list=frames, plot_width=10., plot_height=5.,
+               title='Continuous Sampled Frame Clip, No Video Transform')
 
 
 
@@ -103,7 +103,6 @@ if __name__ == '__main__':
         frames_per_segment=1,
         imagefile_template='img_{:05d}.jpg',
         transform=preprocess,
-        random_shift=True,
         test_mode=False
     )
 
@@ -128,7 +127,8 @@ if __name__ == '__main__':
 
 
     frame_tensor = denormalize(frame_tensor)
-    plot_video(rows=1, cols=5, frame_list=frame_tensor, plot_width=15., plot_height=3.)
+    plot_video(rows=1, cols=5, frame_list=frame_tensor, plot_width=15., plot_height=3.,
+               title='Evenly Sampled Frames, + Video Transform')
 
 
 
@@ -179,7 +179,6 @@ if __name__ == '__main__':
         frames_per_segment=1,
         imagefile_template='img_{:05d}.jpg',
         transform=preprocess,
-        random_shift=True,
         test_mode=False
     )
 
