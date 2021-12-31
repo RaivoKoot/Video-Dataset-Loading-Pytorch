@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 from torchvision import transforms
 import torch
+from typing import List, Union, Tuple, Any
+
 
 class VideoRecord(object):
     """
@@ -26,22 +28,22 @@ class VideoRecord(object):
 
 
     @property
-    def path(self):
+    def path(self) -> str:
         return self._path
 
     @property
-    def num_frames(self):
+    def num_frames(self) -> int:
         return self.end_frame - self.start_frame + 1  # +1 because end frame is inclusive
     @property
-    def start_frame(self):
+    def start_frame(self) -> int:
         return int(self._data[1])
 
     @property
-    def end_frame(self):
+    def end_frame(self) -> int:
         return int(self._data[2])
 
     @property
-    def label(self):
+    def label(self) -> Union[int, List[int]]:
         # just one label_id
         if len(self._data) == 4:
             return int(self._data[3])
@@ -119,7 +121,6 @@ class VideoFrameDataset(torch.utils.data.Dataset):
                  frames_per_segment: int = 1,
                  imagefile_template: str='img_{:05d}.jpg',
                  transform = None,
-                 random_shift: bool = True,
                  test_mode: bool = False):
         super(VideoFrameDataset, self).__init__()
 
@@ -129,26 +130,32 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         self.frames_per_segment = frames_per_segment
         self.imagefile_template = imagefile_template
         self.transform = transform
-        self.random_shift = random_shift
         self.test_mode = test_mode
 
-        self._parse_list()
+        self._parse_annotationfile()
         self._sanity_check_samples()
 
-    def _load_image(self, directory, idx):
-        return [Image.open(os.path.join(directory, self.imagefile_template.format(idx))).convert('RGB')]
+    def _load_image(self, directory: str, idx: int) -> Image.Image:
+        return Image.open(os.path.join(directory, self.imagefile_template.format(idx))).convert('RGB')
 
-    def _parse_list(self):
+    def _parse_annotationfile(self):
         self.video_list = [VideoRecord(x.strip().split(), self.root_path) for x in open(self.annotationfile_path)]
 
     def _sanity_check_samples(self):
         for record in self.video_list:
             if record.num_frames <= 0 or record.start_frame == record.end_frame:
-                print(f"\nDataset Warning: data sample {record.path} seems to have zero RGB frames on disk!\n")
+                print(f"\nDataset Warning: video {record.path} seems to have zero RGB frames on disk!\n")
 
-    def _sample_indices(self, record):
+            elif record.num_frames < (self.num_segments * self.frames_per_segment):
+                print(f"\nDataset Warning: video {record.path} has {record.num_frames} frames "
+                      f"but the dataloader is set up to load "
+                      f"(num_segments={self.num_segments})*(frames_per_segment={self.frames_per_segment})"
+                      f"={self.num_segments * self.frames_per_segment} frames. Dataloader will throw an "
+                      f"error when trying to load this video.\n")
+
+    def _get_start_indices(self, record: VideoRecord) -> 'np.ndarray[int]':
         """
-        For each segment, chooses an index from where frames
+        For each segment, choose a start index from where frames
         are to be loaded from.
 
         Args:
@@ -157,103 +164,82 @@ class VideoFrameDataset(torch.utils.data.Dataset):
             List of indices of where the frames of each
             segment are to be loaded from.
         """
+        # choose start indices that are perfectly evenly spread across the video frames.
+        if self.test_mode:
+            distance_between_indices = (record.num_frames - self.frames_per_segment + 1) / float(self.num_segments)
 
-        segment_duration = (record.num_frames - self.frames_per_segment + 1) // self.num_segments
-        if segment_duration > 0:
-            offsets = np.multiply(list(range(self.num_segments)), segment_duration) + np.random.randint(segment_duration, size=self.num_segments)
-
-        # edge cases for when a video has approximately less than (num_frames*frames_per_segment) frames.
-        # random sampling in that case, which will lead to repeated frames.
+            start_indices = np.array([int(distance_between_indices / 2.0 + distance_between_indices * x)
+                                      for x in range(self.num_segments)])
+        # randomly sample start indices that are approximately evenly spread across the video frames.
         else:
-            offsets = np.sort(np.random.randint(record.num_frames, size=self.num_segments))
+            max_valid_start_index = (record.num_frames - self.frames_per_segment + 1) // self.num_segments
 
-        return offsets
+            start_indices = np.multiply(list(range(self.num_segments)), max_valid_start_index) + \
+                      np.random.randint(max_valid_start_index, size=self.num_segments)
 
-    def _get_val_indices(self, record):
+        return start_indices
+
+    def __getitem__(self, idx: int) -> Union[
+        Tuple[List[Image.Image], Union[int, List[int]]],
+        Tuple['torch.Tensor[num_frames, channels, height, width]', Union[int, List[int]]],
+        Tuple[Any, Union[int, List[int]]],
+        ]:
         """
-        For each segment, finds the center frame index.
+        For video with id idx, loads self.NUM_SEGMENTS * self.FRAMES_PER_SEGMENT
+        frames from evenly chosen locations across the video.
 
         Args:
-            record: VideoRecord denoting a video sample.
+            idx: Video sample index.
         Returns:
-             List of indices of segment center frames.
+            A tuple of (video, label). Label is either a single
+            integer or a list of integers in the case of multiple labels.
+            Video is either 1) a list of PIL images if no transform is used
+            2) a batch of shape (NUM_IMAGES x CHANNELS x HEIGHT x WIDTH) in the range [0,1]
+            if the transform "ImglistToTensor" is used
+            3) or anything else if a custom transform is used.
         """
-        if record.num_frames > self.num_segments + self.frames_per_segment - 1:
-            offsets = self._get_test_indices(record)
+        record: VideoRecord = self.video_list[idx]
 
-        # edge case for when a video does not have enough frames
-        else:
-            offsets = np.sort(np.random.randint(record.num_frames, size=self.num_segments))
+        frame_start_indices: 'np.ndarray[int]' = self._get_start_indices(record)
 
-        return offsets
+        return self._get(record, frame_start_indices)
 
-    def _get_test_indices(self, record):
-        """
-        For each segment, finds the center frame index.
-
-        Args:
-            record: VideoRecord denoting a video sample
-        Returns:
-            List of indices of segment center frames.
-        """
-
-        tick = (record.num_frames - self.frames_per_segment + 1) / float(self.num_segments)
-
-        offsets = np.array([int(tick / 2.0 + tick * x) for x in range(self.num_segments)])
-
-        return offsets
-
-    def __getitem__(self, index):
-        """
-        For video with id index, loads self.NUM_SEGMENTS * self.FRAMES_PER_SEGMENT
-        frames from evenly chosen locations.
-
-        Args:
-            index: Video sample index.
-        Returns:
-            a list of PIL images or the result
-            of applying self.transform on this list if
-            self.transform is not None.
-        """
-        record = self.video_list[index]
-
-        if not self.test_mode:
-            segment_indices = self._sample_indices(record) if self.random_shift else self._get_val_indices(record)
-        else:
-            segment_indices = self._get_test_indices(record)
-
-        return self._get(record, segment_indices)
-
-    def _get(self, record, indices):
+    def _get(self, record: VideoRecord, frame_start_indices: 'np.ndarray[int]') -> Union[
+        Tuple[List[Image.Image], Union[int, List[int]]],
+        Tuple['torch.Tensor[num_frames, channels, height, width]', Union[int, List[int]]],
+        Tuple[Any, Union[int, List[int]]],
+        ]:
         """
         Loads the frames of a video at the corresponding
         indices.
 
         Args:
             record: VideoRecord denoting a video sample.
-            indices: Indices at which to load video frames from.
+            frame_start_indices: Indices from which to load consecutive frames from.
         Returns:
-            1) A list of PIL images or the result
-            of applying self.transform on this list if
-            self.transform is not None.
-            2) An integer denoting the video label.
+            A tuple of (video, label). Label is either a single
+            integer or a list of integers in the case of multiple labels.
+            Video is either 1) a list of PIL images if no transform is used
+            2) a batch of shape (NUM_IMAGES x CHANNELS x HEIGHT x WIDTH) in the range [0,1]
+            if the transform "ImglistToTensor" is used
+            3) or anything else if a custom transform is used.
         """
 
-        indices = indices + record.start_frame
+        frame_start_indices = frame_start_indices + record.start_frame
         images = list()
-        image_indices = list()
-        for seg_ind in indices:
-            frame_index = int(seg_ind)
-            for i in range(self.frames_per_segment):
-                seg_img = self._load_image(record.path, frame_index)
-                images.extend(seg_img)
-                image_indices.append(frame_index)
+
+        # from each start_index, load self.frames_per_segment
+        # consecutive frames
+        for start_index in frame_start_indices:
+            frame_index = int(start_index)
+
+            # load self.frames_per_segment consecutive frames
+            for _ in range(self.frames_per_segment):
+                image = self._load_image(record.path, frame_index)
+                images.append(image)
+
                 if frame_index < record.end_frame:
                     frame_index += 1
-
-        # sort images by index in case of edge cases where segments overlap each other because the overall
-        # video is too short for num_segments*frames_per_segment indices.
-        # _, images = (list(sorted_list) for sorted_list in zip(*sorted(zip(image_indices, images))))
 
         if self.transform is not None:
             images = self.transform(images)
@@ -269,7 +255,8 @@ class ImglistToTensor(torch.nn.Module):
     of shape (NUM_IMAGES x CHANNELS x HEIGHT x WIDTH) in the range [0,1].
     Can be used as first transform for ``VideoFrameDataset``.
     """
-    def forward(self, img_list):
+    @staticmethod
+    def forward(img_list: List[Image.Image]) -> 'torch.Tensor[NUM_IMAGES, CHANNELS, HEIGHT, WIDTH]':
         """
         Converts each PIL image in a list to
         a torch Tensor and stacks them into
